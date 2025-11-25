@@ -7,7 +7,7 @@ export default function Home() {
   const [currentBg, setCurrentBg] = useState(0);
   const [activeCard, setActiveCard] = useState(2); // Middle card
 
-  const portfolioImages = [
+  const portfolioImagesBase = [
     { src: "/portfolio/Enscape_2025-09-09-16-10-30.png", title: "Modern Villa", category: "Residential" },
     { src: "/portfolio/Enscape_2025-08-14-09-41-00.jpg", title: "Contemporary House", category: "Residential" },
     { src: "/portfolio/1000235420.jpg", title: "Urban Design", category: "Commercial" },
@@ -16,21 +16,17 @@ export default function Home() {
     { src: "/portfolio/Enscape_2025-08-20-15-29-12.jpg", title: "Modern Architecture", category: "Residential" },
   ];
 
+  // Create infinite loop by duplicating array
+  const portfolioImages = [...portfolioImagesBase, ...portfolioImagesBase, ...portfolioImagesBase];
+
   // Auto-slide background
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentBg((prev) => (prev + 1) % portfolioImages.length);
+      setCurrentBg((prev) => (prev + 1) % portfolioImagesBase.length);
     }, 5000); // Change every 5 seconds
     return () => clearInterval(interval);
-  }, [portfolioImages.length]);
+  }, []);
 
-  // Auto-rotate carousel
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveCard((prev) => (prev + 1) % portfolioImages.length);
-    }, 4000); // Change every 4 seconds
-    return () => clearInterval(interval);
-  }, [portfolioImages.length]);
 
   // Navigation functions for carousel
   const nextCard = () => {
@@ -45,7 +41,7 @@ export default function Home() {
     const diff = index - activeCard;
     const abssDiff = Math.abs(diff);
 
-    if (abssDiff > 2) return { display: 'none' };
+    if (abssDiff > 3) return { display: 'none' };
 
     // Center card
     if (diff === 0) {
@@ -61,7 +57,7 @@ export default function Home() {
       return {
         transform: `translateX(${diff * 280}px) scale(${1 - abssDiff * 0.2}) rotateY(-${abssDiff * 25}deg)`,
         zIndex: 30 - abssDiff,
-        opacity: 1 - abssDiff * 0.3,
+        opacity: Math.max(0, 1 - abssDiff * 0.3),
       };
     }
 
@@ -69,7 +65,7 @@ export default function Home() {
     return {
       transform: `translateX(${diff * 280}px) scale(${1 - abssDiff * 0.2}) rotateY(${abssDiff * 25}deg)`,
       zIndex: 30 - abssDiff,
-      opacity: 1 - abssDiff * 0.3,
+      opacity: Math.max(0, 1 - abssDiff * 0.3),
     };
   };
 
@@ -378,12 +374,9 @@ export default function Home() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                     <div className="absolute bottom-0 left-0 right-0 p-8">
-                      <div className="flex items-end justify-between">
-                        <div>
-                          <h3 className="text-2xl font-semibold mb-2">{item.title}</h3>
-                          <p className="text-gray-400 uppercase text-sm tracking-wider">{item.category}</p>
-                        </div>
-                        <div className="text-[#E6B800] text-lg font-light">0{index + 1}</div>
+                      <div>
+                        <h3 className="text-2xl font-semibold mb-2">{item.title}</h3>
+                        <p className="text-gray-400 uppercase text-sm tracking-wider">{item.category}</p>
                       </div>
                     </div>
                   </div>
@@ -411,19 +404,6 @@ export default function Home() {
               </svg>
             </button>
 
-            {/* Dots Indicator */}
-            <div className="flex justify-center gap-2 mt-8">
-              {portfolioImages.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setActiveCard(index)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    index === activeCard ? 'bg-[#E6B800] w-8' : 'bg-white/40'
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
           </div>
 
           {/* Mobile Horizontal Scroll */}
@@ -445,12 +425,9 @@ export default function Home() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                     <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <div className="flex items-end justify-between">
-                        <div>
-                          <h3 className="text-lg font-semibold mb-1">{item.title}</h3>
-                          <p className="text-gray-400 uppercase text-xs tracking-wider">{item.category}</p>
-                        </div>
-                        <div className="text-[#E6B800] text-base font-light">0{index + 1}</div>
+                      <div>
+                        <h3 className="text-lg font-semibold mb-1">{item.title}</h3>
+                        <p className="text-gray-400 uppercase text-xs tracking-wider">{item.category}</p>
                       </div>
                     </div>
                   </div>
