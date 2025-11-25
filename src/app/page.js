@@ -8,6 +8,8 @@ export default function Home() {
   const [activeCard, setActiveCard] = useState(2); // Middle card
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallButton, setShowInstallButton] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState(null);
 
   const portfolioImagesBase = [
     { src: "/portfolio/Enscape_2025-09-09-16-10-30.png", title: "Modern Villa", category: "Residential" },
@@ -77,6 +79,19 @@ export default function Home() {
 
   const prevCard = () => {
     setActiveCard((prev) => (prev - 1 + portfolioImages.length) % portfolioImages.length);
+  };
+
+  // Lightbox functions
+  const openLightbox = (image) => {
+    setLightboxImage(image);
+    setLightboxOpen(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+    setLightboxImage(null);
+    document.body.style.overflow = 'unset';
   };
 
   const getCardStyle = (index) => {
@@ -398,7 +413,13 @@ export default function Home() {
               {portfolioImages.map((item, index) => (
                 <div
                   key={index}
-                  onClick={() => setActiveCard(index)}
+                  onClick={() => {
+                    if (index === activeCard) {
+                      openLightbox(item);
+                    } else {
+                      setActiveCard(index);
+                    }
+                  }}
                   className="absolute cursor-pointer transition-all duration-700 ease-out"
                   style={{
                     ...getCardStyle(index),
@@ -456,7 +477,8 @@ export default function Home() {
                 {portfolioImages.map((item, index) => (
                   <div
                     key={index}
-                    className="group relative w-[80vw] h-[50vh] bg-[#1a1a1a] overflow-hidden flex-shrink-0 rounded-lg"
+                    onClick={() => openLightbox(item)}
+                    className="group relative w-[80vw] h-[50vh] bg-[#1a1a1a] overflow-hidden flex-shrink-0 rounded-lg cursor-pointer"
                   >
                     <Image
                       src={item.src}
@@ -641,6 +663,38 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Lightbox Modal */}
+      {lightboxOpen && lightboxImage && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4"
+          onClick={closeLightbox}
+        >
+          <button
+            onClick={closeLightbox}
+            className="absolute top-4 right-4 z-[110] text-white hover:text-[#E6B800] transition-colors"
+            aria-label="Close"
+          >
+            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <div className="relative max-w-7xl max-h-[90vh] w-full" onClick={(e) => e.stopPropagation()}>
+            <Image
+              src={lightboxImage.src}
+              alt={lightboxImage.title}
+              width={1920}
+              height={1080}
+              className="w-full h-full object-contain"
+              quality={100}
+            />
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-8">
+              <h3 className="text-3xl font-semibold mb-2 text-white">{lightboxImage.title}</h3>
+              <p className="text-gray-300 uppercase text-sm tracking-wider">{lightboxImage.category}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         .scrollbar-hide::-webkit-scrollbar {
