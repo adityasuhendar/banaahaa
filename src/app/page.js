@@ -6,6 +6,8 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentBg, setCurrentBg] = useState(0);
   const [activeCard, setActiveCard] = useState(2); // Middle card
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallButton, setShowInstallButton] = useState(false);
 
   const portfolioImagesBase = [
     { src: "/portfolio/Enscape_2025-09-09-16-10-30.png", title: "Modern Villa", category: "Residential" },
@@ -18,6 +20,46 @@ export default function Home() {
 
   // Create infinite loop by duplicating array
   const portfolioImages = [...portfolioImagesBase, ...portfolioImagesBase, ...portfolioImagesBase];
+
+  // Register Service Worker for PWA
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then((registration) => console.log('Service Worker registered:', registration))
+        .catch((error) => console.log('Service Worker registration failed:', error));
+    }
+
+    // Listen for beforeinstallprompt event
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallButton(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  // Handle PWA install
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) {
+      // Fallback for browsers that don't support beforeinstallprompt
+      alert('Untuk install aplikasi:\n\nChrome/Edge Desktop: Klik icon ⊕ di address bar\nChrome Android: Tap menu (⋮) > "Add to Home screen"\niOS Safari: Tap Share (⎙) > "Add to Home Screen"');
+      return;
+    }
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+
+    if (outcome === 'accepted') {
+      setShowInstallButton(false);
+    }
+
+    setDeferredPrompt(null);
+  };
 
   // Auto-slide background
   useEffect(() => {
@@ -568,7 +610,7 @@ export default function Home() {
                 Banaahaa Arsitektur - Studio desain arsitektur dan interior yang menghadirkan solusi inovatif dan personal.
               </p>
               <p className="text-sm text-gray-500">
-                banaahaadesign.com
+                banaahaa.vercel.app
               </p>
             </div>
             <div className="flex flex-col md:items-end gap-6">
@@ -583,8 +625,19 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-8 text-center md:text-left text-gray-500 text-sm">
-            <p>&copy; 2025 Banaahaa Arsitektur. Hak Cipta Dilindungi.</p>
+          <div className="border-t border-white/10 pt-8">
+            <div className="flex flex-col items-center gap-4">
+              <button
+                onClick={handleInstallClick}
+                className="bg-[#E6B800] hover:bg-[#F5D76E] text-black px-8 py-3 text-sm font-semibold uppercase tracking-wider transition-all inline-flex items-center gap-3 rounded-lg"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Install App
+              </button>
+              <p className="text-gray-500 text-sm text-center">&copy; 2025 Banaahaa Arsitektur. Hak Cipta Dilindungi.</p>
+            </div>
           </div>
         </div>
       </footer>
