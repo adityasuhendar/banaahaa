@@ -587,14 +587,14 @@ export default function Home() {
               </p>
             </div>
             <div className="flex flex-col md:items-end gap-6">
-              <div className="text-gray-400">
-                <p className="font-semibold mb-2">Kontak</p>
+              <div className="text-gray-400 md:text-right">
+                <p className="font-semibold text-white mb-2">Ikuti Kami</p>
+                <p>@banaahaa.arsitektur</p>
+              </div>
+              <div className="text-gray-400 md:text-right">
+                <p className="font-semibold text-white mb-2">Kontak</p>
                 <p>info@banaahaadesign.com</p>
                 <p>+62 821 2001 9086</p>
-              </div>
-              <div className="text-gray-400">
-                <p className="font-semibold mb-2">Ikuti Kami</p>
-                <p>@banaahaa.arsitektur</p>
               </div>
             </div>
           </div>
