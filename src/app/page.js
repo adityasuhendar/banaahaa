@@ -24,6 +24,14 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [portfolioImages.length]);
 
+  // Auto-rotate carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveCard((prev) => (prev + 1) % portfolioImages.length);
+    }, 4000); // Change every 4 seconds
+    return () => clearInterval(interval);
+  }, [portfolioImages.length]);
+
   // Navigation functions for carousel
   const nextCard = () => {
     setActiveCard((prev) => (prev + 1) % portfolioImages.length);
