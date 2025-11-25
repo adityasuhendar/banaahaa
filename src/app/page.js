@@ -203,7 +203,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center px-4">
             <a
               href="#portfolio"
-              className="bg-[#E6B800] hover:bg-[#F5D76E] text-black px-8 md:px-12 py-3 md:py-5 text-xs md:text-sm font-semibold uppercase tracking-wider transition-all inline-flex items-center justify-center gap-3"
+              className="bg-[#E6B800] hover:bg-[#F5D76E] text-black px-8 md:px-12 py-3 md:py-5 text-xs md:text-sm font-semibold uppercase tracking-wider transition-all inline-flex items-center justify-center gap-3 rounded-lg"
             >
               Lihat Karya Kami
               <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,7 +212,7 @@ export default function Home() {
             </a>
             <a
               href="#contact"
-              className="border-2 border-white hover:bg-white hover:text-black text-white px-8 md:px-12 py-3 md:py-5 text-xs md:text-sm font-semibold uppercase tracking-wider transition-all"
+              className="border-2 border-white hover:bg-white hover:text-black text-white px-8 md:px-12 py-3 md:py-5 text-xs md:text-sm font-semibold uppercase tracking-wider transition-all rounded-lg"
             >
               Hubungi Kami
             </a>
