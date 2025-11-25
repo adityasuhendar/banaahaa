@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentBg, setCurrentBg] = useState(0);
+  const [activeCard, setActiveCard] = useState(2); // Middle card
 
   const portfolioImages = [
     { src: "/portfolio/Enscape_2025-09-09-16-10-30.png", title: "Modern Villa", category: "Residential" },
@@ -22,6 +23,47 @@ export default function Home() {
     }, 5000); // Change every 5 seconds
     return () => clearInterval(interval);
   }, [portfolioImages.length]);
+
+  // Navigation functions for carousel
+  const nextCard = () => {
+    setActiveCard((prev) => (prev + 1) % portfolioImages.length);
+  };
+
+  const prevCard = () => {
+    setActiveCard((prev) => (prev - 1 + portfolioImages.length) % portfolioImages.length);
+  };
+
+  const getCardStyle = (index) => {
+    const diff = index - activeCard;
+    const abssDiff = Math.abs(diff);
+
+    if (abssDiff > 2) return { display: 'none' };
+
+    // Center card
+    if (diff === 0) {
+      return {
+        transform: 'translateX(0) scale(1) rotateY(0deg)',
+        zIndex: 30,
+        opacity: 1,
+      };
+    }
+
+    // Right cards
+    if (diff > 0) {
+      return {
+        transform: `translateX(${diff * 280}px) scale(${1 - abssDiff * 0.2}) rotateY(-${abssDiff * 25}deg)`,
+        zIndex: 30 - abssDiff,
+        opacity: 1 - abssDiff * 0.3,
+      };
+    }
+
+    // Left cards
+    return {
+      transform: `translateX(${diff * 280}px) scale(${1 - abssDiff * 0.2}) rotateY(${abssDiff * 25}deg)`,
+      zIndex: 30 - abssDiff,
+      opacity: 1 - abssDiff * 0.3,
+    };
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -297,45 +339,115 @@ export default function Home() {
       </section>
 
       {/* Portfolio Section */}
-      <section id="portfolio" className="py-20 md:py-32 bg-[#0a0a0a]">
+      <section id="portfolio" className="py-20 md:py-32 bg-[#0a0a0a] overflow-hidden">
         <div className="max-w-[1920px] mx-auto">
           <div className="text-center mb-12 md:mb-20 px-4 md:px-8">
             <span className="text-xs md:text-sm text-[#E6B800] uppercase tracking-[0.3em]">Karya Kami</span>
             <h2 className="text-4xl md:text-5xl lg:text-7xl font-light mt-4 md:mt-6">Project Terpilih</h2>
-            <p className="text-gray-500 text-sm mt-4 md:hidden">← Geser untuk melihat lebih banyak →</p>
           </div>
 
-          <div className="relative">
-            {/* Fade overlay untuk hint scroll - hanya di mobile */}
-            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10 pointer-events-none md:hidden"></div>
-
-            <div className="overflow-x-auto pb-8 scrollbar-hide">
-              <div className="flex gap-4 md:gap-8 min-w-max pl-4 pr-8 md:px-4">
-                {portfolioImages.map((item, index) => (
-                  <div
-                    key={index}
-                    className="group relative w-[80vw] md:w-[500px] lg:w-[600px] h-[50vh] md:h-[350px] lg:h-[400px] bg-[#1a1a1a] overflow-hidden flex-shrink-0"
-                  >
-                  <Image
-                    src={item.src}
-                    alt={item.title}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    sizes="(max-width: 768px) 85vw, (max-width: 1024px) 500px, 600px"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
-                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 transform translate-y-2 md:translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <div className="flex items-end justify-between">
-                      <div>
-                        <h3 className="text-lg md:text-2xl font-semibold mb-1 md:mb-2">{item.title}</h3>
-                        <p className="text-gray-400 uppercase text-xs md:text-sm tracking-wider">{item.category}</p>
+          {/* Desktop 3D Carousel */}
+          <div className="hidden md:block relative h-[500px] px-4" style={{ perspective: '1500px' }}>
+            <div className="relative w-full h-full flex items-center justify-center">
+              {portfolioImages.map((item, index) => (
+                <div
+                  key={index}
+                  onClick={() => setActiveCard(index)}
+                  className="absolute cursor-pointer transition-all duration-700 ease-out"
+                  style={{
+                    ...getCardStyle(index),
+                    width: '600px',
+                    height: '400px',
+                  }}
+                >
+                  <div className="relative w-full h-full bg-[#1a1a1a] overflow-hidden rounded-lg shadow-2xl">
+                    <Image
+                      src={item.src}
+                      alt={item.title}
+                      fill
+                      className="object-cover"
+                      sizes="600px"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                    <div className="absolute bottom-0 left-0 right-0 p-8">
+                      <div className="flex items-end justify-between">
+                        <div>
+                          <h3 className="text-2xl font-semibold mb-2">{item.title}</h3>
+                          <p className="text-gray-400 uppercase text-sm tracking-wider">{item.category}</p>
+                        </div>
+                        <div className="text-[#E6B800] text-lg font-light">0{index + 1}</div>
                       </div>
-                      <div className="text-[#E6B800] text-base md:text-lg font-light">0{index + 1}</div>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
+
+            {/* Navigation Buttons */}
+            <button
+              onClick={prevCard}
+              className="absolute left-8 top-1/2 -translate-y-1/2 z-40 bg-[#E6B800] hover:bg-[#F5D76E] text-black p-4 rounded-full transition-all"
+              aria-label="Previous"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              onClick={nextCard}
+              className="absolute right-8 top-1/2 -translate-y-1/2 z-40 bg-[#E6B800] hover:bg-[#F5D76E] text-black p-4 rounded-full transition-all"
+              aria-label="Next"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* Dots Indicator */}
+            <div className="flex justify-center gap-2 mt-8">
+              {portfolioImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveCard(index)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    index === activeCard ? 'bg-[#E6B800] w-8' : 'bg-white/40'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile Horizontal Scroll */}
+          <div className="md:hidden relative">
+            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10 pointer-events-none"></div>
+            <div className="overflow-x-auto pb-8 scrollbar-hide">
+              <div className="flex gap-4 min-w-max pl-4 pr-8">
+                {portfolioImages.map((item, index) => (
+                  <div
+                    key={index}
+                    className="group relative w-[80vw] h-[50vh] bg-[#1a1a1a] overflow-hidden flex-shrink-0 rounded-lg"
+                  >
+                    <Image
+                      src={item.src}
+                      alt={item.title}
+                      fill
+                      className="object-cover"
+                      sizes="80vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <div className="flex items-end justify-between">
+                        <div>
+                          <h3 className="text-lg font-semibold mb-1">{item.title}</h3>
+                          <p className="text-gray-400 uppercase text-xs tracking-wider">{item.category}</p>
+                        </div>
+                        <div className="text-[#E6B800] text-base font-light">0{index + 1}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
