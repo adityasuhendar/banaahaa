@@ -297,39 +297,45 @@ export default function Home() {
       </section>
 
       {/* Portfolio Section */}
-      <section id="portfolio" className="py-32 px-8 bg-[#0a0a0a]">
+      <section id="portfolio" className="py-20 md:py-32 bg-[#0a0a0a]">
         <div className="max-w-[1920px] mx-auto">
-          <div className="text-center mb-20">
-            <span className="text-sm text-[#E6B800] uppercase tracking-[0.3em]">Karya Kami</span>
-            <h2 className="text-5xl md:text-7xl font-light mt-6">Project Terpilih</h2>
+          <div className="text-center mb-12 md:mb-20 px-4 md:px-8">
+            <span className="text-xs md:text-sm text-[#E6B800] uppercase tracking-[0.3em]">Karya Kami</span>
+            <h2 className="text-4xl md:text-5xl lg:text-7xl font-light mt-4 md:mt-6">Project Terpilih</h2>
+            <p className="text-gray-500 text-sm mt-4 md:hidden">← Geser untuk melihat lebih banyak →</p>
           </div>
 
-          <div className="overflow-x-auto pb-8 scrollbar-hide">
-            <div className="flex gap-8 min-w-max px-4">
-              {portfolioImages.map((item, index) => (
-                <div
-                  key={index}
-                  className="group relative w-[600px] h-[400px] bg-[#1a1a1a] overflow-hidden"
-                >
+          <div className="relative">
+            {/* Fade overlay untuk hint scroll - hanya di mobile */}
+            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10 pointer-events-none md:hidden"></div>
+
+            <div className="overflow-x-auto pb-8 scrollbar-hide">
+              <div className="flex gap-4 md:gap-8 min-w-max pl-4 pr-8 md:px-4">
+                {portfolioImages.map((item, index) => (
+                  <div
+                    key={index}
+                    className="group relative w-[80vw] md:w-[500px] lg:w-[600px] h-[50vh] md:h-[350px] lg:h-[400px] bg-[#1a1a1a] overflow-hidden flex-shrink-0"
+                  >
                   <Image
                     src={item.src}
                     alt={item.title}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    sizes="600px"
+                    sizes="(max-width: 768px) 85vw, (max-width: 1024px) 500px, 600px"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
-                  <div className="absolute bottom-0 left-0 right-0 p-8 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 transform translate-y-2 md:translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                     <div className="flex items-end justify-between">
                       <div>
-                        <h3 className="text-2xl font-semibold mb-2">{item.title}</h3>
-                        <p className="text-gray-400 uppercase text-sm tracking-wider">{item.category}</p>
+                        <h3 className="text-lg md:text-2xl font-semibold mb-1 md:mb-2">{item.title}</h3>
+                        <p className="text-gray-400 uppercase text-xs md:text-sm tracking-wider">{item.category}</p>
                       </div>
-                      <div className="text-[#E6B800] text-lg font-light">0{index + 1}</div>
+                      <div className="text-[#E6B800] text-base md:text-lg font-light">0{index + 1}</div>
                     </div>
                   </div>
                 </div>
               ))}
+            </div>
             </div>
           </div>
         </div>
