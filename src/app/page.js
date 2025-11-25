@@ -137,7 +137,7 @@ export default function Home() {
             </div>
           ))}
           {/* Overlay */}
-          <div className="absolute inset-0 bg-black/60"></div>
+          <div className="absolute inset-0 bg-black/75"></div>
         </div>
 
         {/* Content */}
